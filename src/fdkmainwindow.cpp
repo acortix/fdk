@@ -18,10 +18,10 @@ FDKMainWindow::FDKMainWindow(QWidget *parent) :
     regionSettings.sparsity = 0.02;
     regionSettings.desiredSparsity = (FDK::UInt)( (FDK::Float)(45*45)*0.02f);
 
-    QString stringOfCharacters = "qwertyuiopasdfghjklzxcvbnm. ";
+    string stringOfCharacters = "qwertyuiopasdfghjklzxcvbnm. ";
     vector<char> charactersToLearn;
-    for(QChar ch : stringOfCharacters){
-        charactersToLearn.push_back(ch.toLatin1());
+    for(char ch : stringOfCharacters){
+        charactersToLearn.push_back(ch);
     }
 
 
