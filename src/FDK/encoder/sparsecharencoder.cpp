@@ -62,9 +62,9 @@ char SparseCharEncoder::nextCharacter(){
         return 0;
     }
 }
-void SparseCharEncoder::appendToBuffer(QString v){
-    for(QChar c : v){
-        Encoder::appendToBuffer(c.toLatin1());
+void SparseCharEncoder::appendToBuffer(string v){
+    for(char c : v){
+        Encoder::appendToBuffer(c);
     }
 
 }

@@ -1,6 +1,7 @@
 #ifndef FDKSTRUCTURES_H
 #define FDKSTRUCTURES_H
-#include <QList>
+#include <vector>
+using namespace std;
 namespace FDK {
 
 typedef long long int           Time;
@@ -48,7 +49,7 @@ struct RegionSettings{
 template<typename T>
 struct EncoderSettings{
     RegionSettings regionSettings;
-    QList<T> possibleSignals;
+    vector<T> possibleSignals;
 };
 
 struct EncoderCharSettings : EncoderSettings<char>{

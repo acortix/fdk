@@ -1,7 +1,8 @@
 #ifndef SPARSEENCODER_H
 #define SPARSEENCODER_H
 #include "encoder.h"
-
+#include <string>
+using namespace std;
 
 namespace FDK {
 class SparseCharEncoder : public Encoder<char>
@@ -9,7 +10,7 @@ class SparseCharEncoder : public Encoder<char>
 public:
     SparseCharEncoder(EncoderSettings<char> settings);
     char     nextCharacter();
-    void     appendToBuffer(QString v);
+    void     appendToBuffer(string v);
     void     step();
 };
 }

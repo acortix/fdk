@@ -19,9 +19,9 @@ FDKMainWindow::FDKMainWindow(QWidget *parent) :
     regionSettings.desiredSparsity = (FDK::UInt)( (FDK::Float)(45*45)*0.02f);
 
     QString stringOfCharacters = "qwertyuiopasdfghjklzxcvbnm. ";
-    QList<char> charactersToLearn;
+    vector<char> charactersToLearn;
     for(QChar ch : stringOfCharacters){
-        charactersToLearn.append(ch.toLatin1());
+        charactersToLearn.push_back(ch.toLatin1());
     }
 
 
@@ -40,7 +40,7 @@ FDKMainWindow::FDKMainWindow(QWidget *parent) :
 
     // Feed encoder some information
     for(int x = 0; x < 10000; x++){
-        encoder->appendToBuffer( QString("the quick brown fox jumps over the lazy dog. ") );
+        encoder->appendToBuffer( string("the quick brown fox jumps over the lazy dog. ") );
         //encoder->appendToBuffer( QString("abcdefgfedcb") );
     }
 
