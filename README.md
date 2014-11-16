@@ -2,4 +2,4 @@
 
 ## Links
 *[Wiki](https://github.com/acortix/fdk/wiki)
-**[Text Prediction and Understanding](https://github.com/acortix/fdk/wiki/Text-Prediction-and-Understanding)
+*[Text Prediction and Understanding](https://github.com/acortix/fdk/wiki/Text-Prediction-and-Understanding)
