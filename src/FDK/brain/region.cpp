@@ -9,15 +9,15 @@ Region::Region(RegionSettings settings) : Atom()
     _input = new Sensor(settings.sensorSettings);
     _output = new Sensor(settings.sensorSettings);
     _debug = new Sensor(settings.sensorSettings);
-    _columns = new QList<QList<Column*>>();
+    _columns = new vector<vector<Column*>>();
 
     // Init columns
     for(UInt x = 0; x < settings.sensorSettings.width; x++){
-        QList<Column*> column;
+        vector<Column*> column;
         for(UInt y = 0; y < settings.sensorSettings.height; y++){
-            column.append(new Column(x,y, settings.depth, this));
+            column.push_back(new Column(x,y, settings.depth, this));
         }
-        _columns->append(column);
+        _columns->push_back(column);
     }
 }
 
@@ -32,7 +32,7 @@ void Region::step(){
 
     // Copy excited cells to previusly excited cells
     _previouslyExcitedCells.clear();
-    _previouslyExcitedCells = QList<Cell*>(_excitedCells);
+    _previouslyExcitedCells = _excitedCells;
 
     // TODO: Perform SP
 
@@ -79,7 +79,7 @@ void Region::activateColumns(){
         for(Cell * cell : *column->cells()){
             if(cell->wasPredicted( this->time() )){
                 cell->excite( this->time() );
-                _excitedCells.append(cell);
+                _excitedCells.push_back(cell);
                 hasPredictedCells = true;
                 _regionData.excitedCellsDueToPrediction++;
             }
@@ -104,8 +104,8 @@ void Region::activateColumns(){
             // Best cell found
             if(bestScore > 1){
                 bestCell->excite( this->time() );
-                _excitedCells.append(bestCell);
-                _learningCells.append(bestCell);
+                _excitedCells.push_back(bestCell);
+                _learningCells.push_back(bestCell);
                 _regionData.excitedCellsDueActivation++;
                 // Best cell not found - return one with least amount of segments
             } else {
@@ -119,9 +119,9 @@ void Region::activateColumns(){
 
                 if(!bestCell->isExcited( this->time())){
                 bestCell->excite( this->time() );
-                _excitedCells.append(bestCell);
+                _excitedCells.push_back(bestCell);
                 }
-                _learningCells.append(bestCell);
+                _learningCells.push_back(bestCell);
                 _regionData.excitedCellsDueToLackOfSegments++;
             }
 
@@ -130,7 +130,7 @@ void Region::activateColumns(){
                 // Check if cell wasn't excited in T-1
                 if(!cell->wasExcited( this->time())){
                     cell->excite(this->time() );
-                    _burstingCells.append(cell);
+                    _burstingCells.push_back(cell);
                 }
             }
         }
@@ -190,7 +190,7 @@ void Region::makePrediction(){
 
     qSort(_predictedColumns.begin(),_predictedColumns.end(), Column::comparePredictivePotential);
 
-    while( _predictedColumns.length() > _settings.desiredSparsity){
+    while( _predictedColumns.size() > _settings.desiredSparsity){
         _predictedColumns.pop_back();
     }
 

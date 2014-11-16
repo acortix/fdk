@@ -2,7 +2,6 @@
 #define ENCODERINTERFACE_H
 #include <FDK/atom.h>
 #include <FDK/connection/sensor.h>
-#include <QHash>
 
 namespace FDK {
 class EncoderInterface : public Atom

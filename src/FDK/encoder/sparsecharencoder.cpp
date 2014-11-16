@@ -1,5 +1,5 @@
 #include "sparsecharencoder.h"
-#include <qdebug.h>
+
 namespace FDK {
 SparseCharEncoder::SparseCharEncoder(EncoderSettings<char> settings) : Encoder<char>(settings)
 {
@@ -50,15 +50,14 @@ SparseCharEncoder::SparseCharEncoder(EncoderSettings<char> settings) : Encoder<c
         }
 
         _map[c] = randomSensor;
-        qDebug() << "Generated SDR for " << c;
     }
 
     delete progressSensor;
 
 }
 char SparseCharEncoder::nextCharacter(){
-    if(!_buffer.isEmpty()) {
-        return _buffer.first();
+    if(!_buffer.empty()) {
+        return _buffer.front();
     } else {
         return 0;
     }

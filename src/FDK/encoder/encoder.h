@@ -1,7 +1,9 @@
 #ifndef ENCODER_H
 #define ENCODER_H
 #include "encoderinterface.h"
-#include <qdebug.h>
+#include <list>
+#include <map>
+using namespace std;
 namespace FDK {
 template<class T>
 class Encoder : public EncoderInterface
@@ -13,8 +15,8 @@ public:
 
     void step(){
         Atom::step();
-        if(!_buffer.isEmpty()){
-            _map[_buffer.first()]->copyTo( _output );
+        if(!_buffer.empty()){
+            _map[_buffer.front()]->copyTo( _output );
             _buffer.pop_front();
         }
         this->output()->step();
@@ -22,8 +24,8 @@ public:
 
 
     Sensor * nextOutput(){
-        if(!_buffer.isEmpty()) {
-            return _map[ _buffer.first() ];
+        if(!_buffer.empty()) {
+            return _map[ _buffer.front() ];
         } else {
             return NULL;
         }
@@ -41,25 +43,28 @@ public:
         }
     }
     void    appendToBuffer(T v){
-        _buffer.append(v);
+        _buffer.push_back(v);
     }
 
     T       decode(Sensor * sensor){
         UInt bestScore = 0;
         UInt currentScore = 0;
-        char bestChar = _map.keys().first();
-        for( T c : _map.keys() ){
+
+
+        T bestChar = _map.begin()->first;
+
+        for( pair<T,Sensor*> value : _map ){
             currentScore = 0;
             for(UInt x = 0; x < _settings.regionSettings.sensorSettings.width; x++){
                 for(UInt y = 0; y < _settings.regionSettings.sensorSettings.height; y++){
-                    if(_map[c]->read(x,y) &&  (_map[c]->read(x,y) == sensor->read(x,y)) ){
+                    if(_map[ value.first ]->read(x,y) &&  (_map[ value.first ]->read(x,y) == sensor->read(x,y)) ){
                         currentScore++;
                     }
                 }
             }
             if(currentScore > bestScore){
                 bestScore = currentScore;
-                bestChar = c;
+                bestChar = value.first ;
             }
         }
         return bestChar;
@@ -67,10 +72,10 @@ public:
 
 protected:
     EncoderSettings<T>      _settings;
-    UInt            _neededCharges;
+    UInt                    _neededCharges;
     Sensor *                _output;
-    QHash<T,Sensor*>        _map;
-    QList<T>                _buffer;
+    map<T,Sensor*>          _map;
+    list<T>                 _buffer;
 };
 }
 #endif // ENCODER_H

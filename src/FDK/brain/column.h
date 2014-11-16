@@ -20,34 +20,34 @@ class Column : public Atom
 public:
                     Column(UInt x, UInt y, UInt depth, Region * region);
 
-    UInt         x()                                     { return _x; }
-    UInt         y()                                     { return _y; }
+    UInt            x()                                     { return _x; }
+    UInt            y()                                     { return _y; }
 
     void            activate(Time currentTime);
     void            deactivate(Time currentTime);
     void            predict(Time currentTime);
-    UInt         predictionPotential()                   { return _predictionPotential; }
+    UInt            predictionPotential()                   { return _predictionPotential; }
 
-    bool            isActive(Time currentTime)          { return currentTime - _columnTime.activeTime == 0 ? true : false; }
+    bool            isActive(Time currentTime)              { return currentTime - _columnTime.activeTime == 0 ? true : false; }
 
     bool            isPredicted(Time currentTime);
 
-    UInt         depth()                                 { return _depth; }
+    UInt            depth()                                 { return _depth; }
 
     vector<Cell*>*  cells()                                 { return _cells; }
 
     Region*         region()                                {return _region; }
 
-    static bool comparePredictivePotential( Column * a, Column * b){
+    static bool     comparePredictivePotential( Column * a, Column * b){
         return a->predictionPotential() < b->predictionPotential();
     }
 
 private:
-    UInt         _x;
-    UInt         _y;
-    UInt         _depth;
+    UInt            _x;
+    UInt            _y;
+    UInt            _depth;
 
-    UInt         _predictionPotential;
+    UInt            _predictionPotential;
 
     vector<Cell*> * _cells;
     ColumnTime      _columnTime;

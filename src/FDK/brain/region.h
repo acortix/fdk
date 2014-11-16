@@ -1,10 +1,10 @@
 #ifndef REGION_H
 #define REGION_H
-#include <QList>
+#include <vector>
 #include <FDK/atom.h>
 #include <FDK/connection/sensor.h>
 #include "column.h"
-
+using namespace std;
 
 namespace FDK {
 struct RegionData {
@@ -63,15 +63,15 @@ private:
     Sensor *                    _output;
 
 
-    QList<QList<Column*>> *     _columns;
+    vector<vector<Column*>> *   _columns;
 
-    QList<Cell*>                _excitedCells;
-    QList<Cell*>                _learningCells;
-    QList<Cell*>                _predictedCells;
-    QList<Cell*>                _previouslyExcitedCells;
-    QList<Cell*>                _burstingCells;
+    vector<Cell*>               _excitedCells;
+    vector<Cell*>               _learningCells;
+    vector<Cell*>               _predictedCells;
+    vector<Cell*>               _previouslyExcitedCells;
+    vector<Cell*>               _burstingCells;
 
-    QList<Column*>              _predictedColumns;
+    vector<Column*>             _predictedColumns;
 
     void                        spatialPooler();
     void                        activateColumns();

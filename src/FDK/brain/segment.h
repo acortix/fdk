@@ -2,8 +2,8 @@
 #define SEGMENT_H
 #include <FDK/atom.h>
 #include <FDK/brain/synapse.h>
-#include <QList>
-
+#include <vector>
+using namespace std;
 namespace FDK {
 class Cell;
 struct SegmentTime{
@@ -19,11 +19,11 @@ class Segment : public Atom
 public:
     Segment(Cell * sourceCell);
     UInt activation( Time currentTime );
-    QList<Synapse*> * synapses() { return _synapses; }
-    void addSynapse( Synapse* synapse ) { _synapses->append(synapse); }
+    vector<Synapse*> * synapses() { return _synapses; }
+    void addSynapse( Synapse* synapse ) { _synapses->push_back(synapse); }
     void predict(Time currentTime);
 private:
-    QList<Synapse*> * _synapses;
+    vector<Synapse*> * _synapses;
     UInt _calculationTime = -1;
     UInt _activeSynapses = 0;
     Cell * _sourceCell;

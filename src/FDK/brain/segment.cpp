@@ -4,7 +4,7 @@
 namespace FDK {
 Segment::Segment(Cell *sourceCell)
 {
-    _synapses = new QList<Synapse*>();
+    _synapses = new vector<Synapse*>();
     _sourceCell = sourceCell;
     _activeSynapses = 0;
 }

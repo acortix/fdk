@@ -2,6 +2,7 @@
 #include "region.h"
 
 namespace FDK {
+
 Column::Column(UInt x, UInt y, UInt depth, Region *region)
 {
     _x = x;
@@ -32,6 +33,7 @@ void Column::predict(Time currentTime){
     _columnTime.predictionTime = currentTime;
     _predictionPotential += 1;
 }
+
 bool Column::isPredicted(Time currentTime){
     if( _columnTime.predictionTime == currentTime && _predictionPotential > 15){
         return true;
@@ -39,5 +41,6 @@ bool Column::isPredicted(Time currentTime){
         return false;
     }
 }
+
 }
 
