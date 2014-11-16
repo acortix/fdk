@@ -8,10 +8,10 @@ class Atom
 {
 public:
     Atom();
-    fdkutime time();
+    Time time();
     void step();
 private:
-    fdkutime _time = 0;
+    Time _time = 0;
 };
 }
 #endif // ATOM_H

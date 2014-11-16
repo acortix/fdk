@@ -45,13 +45,13 @@ public:
     }
 
     T       decode(Sensor * sensor){
-        fdkuint bestScore = 0;
-        fdkuint currentScore = 0;
+        UInt bestScore = 0;
+        UInt currentScore = 0;
         char bestChar = _map.keys().first();
         for( T c : _map.keys() ){
             currentScore = 0;
-            for(fdkuint x = 0; x < _settings.regionSettings.sensorSettings.width; x++){
-                for(fdkuint y = 0; y < _settings.regionSettings.sensorSettings.height; y++){
+            for(UInt x = 0; x < _settings.regionSettings.sensorSettings.width; x++){
+                for(UInt y = 0; y < _settings.regionSettings.sensorSettings.height; y++){
                     if(_map[c]->read(x,y) &&  (_map[c]->read(x,y) == sensor->read(x,y)) ){
                         currentScore++;
                     }
@@ -67,7 +67,7 @@ public:
 
 protected:
     EncoderSettings<T>      _settings;
-    fdkuint            _neededCharges;
+    UInt            _neededCharges;
     Sensor *                _output;
     QHash<T,Sensor*>        _map;
     QList<T>                _buffer;

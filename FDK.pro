@@ -32,7 +32,8 @@ SOURCES += main.cpp\
     FDK/classifier/classifier.cpp \
     FDK/encoder/encoder.cpp \
     FDK/encoder/encoderinterface.cpp \
-    FDK/encoder/sparsecharencoder.cpp
+    FDK/encoder/sparsecharencoder.cpp \
+    FDK/timevector.cpp
 
 HEADERS  += fdkmainwindow.h \
     FDK/fdk.h \
@@ -51,7 +52,8 @@ HEADERS  += fdkmainwindow.h \
     FDK/classifier/classifier.h \
     FDK/encoder/encoder.h \
     FDK/encoder/encoderinterface.h \
-    FDK/encoder/sparsecharencoder.h
+    FDK/encoder/sparsecharencoder.h \
+    FDK/timevector.h
 
 FORMS    += fdkmainwindow.ui
 

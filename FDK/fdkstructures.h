@@ -3,26 +3,45 @@
 #include <QList>
 namespace FDK {
 
-typedef unsigned long long int  fdkutime;
-typedef unsigned long int       fdkuint;
-typedef float                   fdkfloat;
+typedef long long int           Time;
+typedef unsigned long int       UInt;
+typedef float                   Float;
+
+struct UIntPoint{
+    UIntPoint(){
+        this->x = 0;
+        this->y = 0;
+    }
+
+    UIntPoint(UInt x, UInt y){
+        this->x = x;
+        this->y = y;
+    }
+
+    UInt x = 0;
+    UInt y = 0;
+};
+struct UIntSize{
+    UInt width;
+    UInt height;
+};
 
 struct SensorSettings{
-    fdkuint width;
-    fdkuint height;
+    UInt width;
+    UInt height;
 };
 
 struct RegionSettings{
     SensorSettings sensorSettings;
-    fdkuint depth;
+    UInt depth;
 
-    fdkfloat learningRadius;
-    fdkfloat initialPerm;
+    Float learningRadius;
+    Float initialPerm;
 
 
-    fdkfloat learningRate;
-    fdkfloat sparsity;
-    fdkuint desiredSparsity;
+    Float learningRate;
+    Float sparsity;
+    UInt desiredSparsity;
 
 };
 
@@ -36,7 +55,7 @@ struct EncoderCharSettings : EncoderSettings<char>{
 
 };
 
-inline fdkfloat randf() { return static_cast <fdkfloat> (rand()) / static_cast <fdkfloat> (RAND_MAX);}
-inline fdkuint randuint(fdkuint a, fdkuint b) {return static_cast<fdkuint>( rand() % (b-a) + a); }
+inline Float randf() { return static_cast <Float> (rand()) / static_cast <Float> (RAND_MAX);}
+inline UInt randuint(UInt a, UInt b) {return static_cast<UInt>( rand() % (b-a) + a); }
 }
 #endif // FDKSTRUCTURES_H

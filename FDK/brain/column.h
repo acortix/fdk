@@ -7,8 +7,8 @@ using namespace std;
 namespace FDK {
 class Region;
 struct ColumnTime {
-    fdkuint activeTime = 0;
-    fdkuint predictionTime = 0;
+    UInt activeTime = 0;
+    UInt predictionTime = 0;
 
     void reset(){
         activeTime = 0;
@@ -18,21 +18,21 @@ struct ColumnTime {
 class Column : public Atom
 {
 public:
-                    Column(fdkuint x, fdkuint y, fdkuint depth, Region * region);
+                    Column(UInt x, UInt y, UInt depth, Region * region);
 
-    fdkuint         x()                                     { return _x; }
-    fdkuint         y()                                     { return _y; }
+    UInt         x()                                     { return _x; }
+    UInt         y()                                     { return _y; }
 
-    void            activate(fdkutime currentTime);
-    void            deactivate(fdkutime currentTime);
-    void            predict(fdkutime currentTime);
-    fdkuint         predictionPotential()                   { return _predictionPotential; }
+    void            activate(Time currentTime);
+    void            deactivate(Time currentTime);
+    void            predict(Time currentTime);
+    UInt         predictionPotential()                   { return _predictionPotential; }
 
-    bool            isActive(fdkutime currentTime)          { return currentTime - _columnTime.activeTime == 0 ? true : false; }
+    bool            isActive(Time currentTime)          { return currentTime - _columnTime.activeTime == 0 ? true : false; }
 
-    bool            isPredicted(fdkutime currentTime);
+    bool            isPredicted(Time currentTime);
 
-    fdkuint         depth()                                 { return _depth; }
+    UInt         depth()                                 { return _depth; }
 
     vector<Cell*>*  cells()                                 { return _cells; }
 
@@ -43,11 +43,11 @@ public:
     }
 
 private:
-    fdkuint         _x;
-    fdkuint         _y;
-    fdkuint         _depth;
+    UInt         _x;
+    UInt         _y;
+    UInt         _depth;
 
-    fdkuint         _predictionPotential;
+    UInt         _predictionPotential;
 
     vector<Cell*> * _cells;
     ColumnTime      _columnTime;

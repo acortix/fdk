@@ -13,13 +13,13 @@ SparseCharEncoder::SparseCharEncoder(EncoderSettings<char> settings) : Encoder<c
 
     for(char c : settings.possibleSignals){
 
-        fdkuint activeCharges = 0;
+        UInt activeCharges = 0;
 
         Sensor * randomSensor = new Sensor(settings.regionSettings.sensorSettings);
         randomSensor->fullyDischarge();
 
-        for(fdkuint x = 0; x < settings.regionSettings.sensorSettings.width; x++){
-            for(fdkuint y = 0; y < settings.regionSettings.sensorSettings.height; y++){
+        for(UInt x = 0; x < settings.regionSettings.sensorSettings.width; x++){
+            for(UInt y = 0; y < settings.regionSettings.sensorSettings.height; y++){
                 if(!progressSensor->read(x,y)){
                     activeCharges++;
                     randomSensor->charge(x,y);
@@ -28,10 +28,10 @@ SparseCharEncoder::SparseCharEncoder(EncoderSettings<char> settings) : Encoder<c
         }
 
         while(activeCharges > _neededCharges){
-            for(fdkuint x = 0; x < settings.regionSettings.sensorSettings.width; x++){
-                for(fdkuint y = 0; y < settings.regionSettings.sensorSettings.height; y++){
+            for(UInt x = 0; x < settings.regionSettings.sensorSettings.width; x++){
+                for(UInt y = 0; y < settings.regionSettings.sensorSettings.height; y++){
                     if(activeCharges > _neededCharges && randomSensor->read(x,y)){
-                        fdkfloat r = randf();
+                        Float r = randf();
                         if(r > 0.8){
                             randomSensor->discharge(x,y);
                             activeCharges--;
@@ -41,8 +41,8 @@ SparseCharEncoder::SparseCharEncoder(EncoderSettings<char> settings) : Encoder<c
             }
         }
 
-        for(fdkuint x = 0; x < settings.regionSettings.sensorSettings.width; x++){
-            for(fdkuint y = 0; y < settings.regionSettings.sensorSettings.height; y++){
+        for(UInt x = 0; x < settings.regionSettings.sensorSettings.width; x++){
+            for(UInt y = 0; y < settings.regionSettings.sensorSettings.height; y++){
                 if(randomSensor->read(x,y)){
                     progressSensor->charge(x,y);
                 }

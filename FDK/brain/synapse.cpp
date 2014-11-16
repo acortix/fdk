@@ -11,7 +11,7 @@ Synapse::Synapse(Cell *source, Segment *distanation)
     _source->addAxonalSynapse(this);
     _distanation->addSynapse(this);
 }
-void Synapse::predict(fdkutime currentTime){
+void Synapse::predict(Time currentTime){
     _distanation->predict(currentTime);
 }
 }

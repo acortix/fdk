@@ -5,7 +5,7 @@
 namespace FDK {
 
 // Default constructor
-Cell::Cell(fdkuint i, Column *column)
+Cell::Cell(UInt i, Column *column)
 {
     // Index of a cell inside a column
     _index = i;
@@ -19,14 +19,14 @@ Cell::Cell(fdkuint i, Column *column)
 }
 
 // Learning algorithm for segments
-void Cell::adaptSegments(fdkfloat rate, fdkutime currentTime){
+void Cell::adaptSegments(Float rate, Time currentTime){
     // Iterate through each segment of all distal dendrites
     for(Segment * segment : *_distalDendriteSegments){
         // Iterate through each synapse of a current segment
         for(Synapse * synapse : *segment->synapses()){
             // If the cell on the other end of the synapse is excited at current time
             // Increase synapse strenght
-            if(synapse->source()->isExcited(currentTime)){
+            if(synapse->source()->isExcited( currentTime )){
                 synapse->increase(rate);
 
             // If the cell on the other end of the synapse is NOT excited at current time
@@ -49,13 +49,9 @@ void Cell::addDistalDendriteSegment(Segment * segment){
 }
 
 // Predict cell
-void Cell::predict(fdkutime currentTime){
-    _cellTime.predictTime = currentTime;
+void Cell::predict(Time currentTime){
+    _cellTime.predictTime.set( currentTime );
     _column->predict(currentTime);
 }
 
-// Reset cell
-void Cell::reset(){
-    _cellTime.reset();
-}
 }

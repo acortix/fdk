@@ -12,9 +12,9 @@ Region::Region(RegionSettings settings) : Atom()
     _columns = new QList<QList<Column*>>();
 
     // Init columns
-    for(fdkuint x = 0; x < settings.sensorSettings.width; x++){
+    for(UInt x = 0; x < settings.sensorSettings.width; x++){
         QList<Column*> column;
-        for(fdkuint y = 0; y < settings.sensorSettings.height; y++){
+        for(UInt y = 0; y < settings.sensorSettings.height; y++){
             column.append(new Column(x,y, settings.depth, this));
         }
         _columns->append(column);
@@ -39,22 +39,15 @@ void Region::step(){
     // Clear time cache
     _excitedCells.clear();
     _burstingCells.clear();
-    _predictedColumns.clear();
+
     _learningCells.clear();
-    _predictedCells.clear();
+
 
 
 
     this->activateColumns();
     this->growSegments();
-
-
     this->adjustDistalSynapses();
-
-    // Clear predictions
-
-
-
     this->makePrediction();
 
 
@@ -64,83 +57,85 @@ void Region::step(){
 void Region::spatialPooler(){
 
 }
-
+/* Problems:
+ * No cells are chosen due to activation
+ * Negative adjustment works poorly
+ *
+ *
+ *
+ *
+ */
 void Region::activateColumns(){
     // Activate columns
-    for(fdkuint x = 0; x < _settings.sensorSettings.width;x++){
-        for(fdkuint y = 0; y < _settings.sensorSettings.height; y++){
-            Column * column = _columns->at(x).at(y);
-            if(_input->read(x,y)){
-                column->activate( this->time() );
-                _regionData.activatedColumns++;
+    for(UIntPoint p : *_input->buffer()){
 
-                bool hasPredictedCells = false;
-                for(Cell * cell : *column->cells()){
-                    if(cell->wasPredicted( this->time() )){
-                        cell->excite( this->time() );
-                        _excitedCells.append(cell);
-                        _predictedCells.append(cell);
-                        hasPredictedCells = true;
-                        _regionData.excitedCellsDueToPrediction++;
-                    }
-                }
-                if(!hasPredictedCells){
+        // Set column variable to make code more readable
+        Column * column = _columns->at(p.x).at(p.y);
 
-                    // Find best cell
-                    Cell * bestCell = column->cells()->at(0);
-                    fdkuint bestScore = 0;
-                    fdkuint currentScore = 0;
+        column->activate( this->time() );
+        _regionData.activatedColumns++;
 
-                    for(Cell * cell : *column->cells()){
-                        for(Segment * segment : *cell->distalDendriteSegments()){
-                            fdkuint activation = segment->activation( this->time() );
-                            if(activation > currentScore){
-                                bestScore = activation;
-                                bestCell = cell;
-                            }
-                        }
-                    }
+        bool hasPredictedCells = false;
+        for(Cell * cell : *column->cells()){
+            if(cell->wasPredicted( this->time() )){
+                cell->excite( this->time() );
+                _excitedCells.append(cell);
+                hasPredictedCells = true;
+                _regionData.excitedCellsDueToPrediction++;
+            }
+        }
 
-                    // Best cell found
-                    if(bestScore > 10){
-                        bestCell->excite( this->time() );
-                        _excitedCells.append(bestCell);
-                        _learningCells.append(bestCell);
-                        _regionData.excitedCellsDueActivation++;
-                    // Best cell not found - return one with least amount of segments
-                    } else {
-                        fdkuint numberOfSegments = bestCell->distalDendriteSegments()->size();
-                        for(Cell * cell: *column->cells()){
-                            if(cell->distalDendriteSegments()->size() < numberOfSegments){
-                                numberOfSegments = cell->distalDendriteSegments()->size();
-                                bestCell = cell;
-                            }
-                        }
+        if(!hasPredictedCells){
 
-                        bestCell->excite( this->time() );
-                        _excitedCells.append(bestCell);
-                        _learningCells.append(bestCell);
-                        _regionData.excitedCellsDueToLackOfSegments++;
-                    }
+            // Find best cell
+            Cell * bestCell = column->cells()->at(0);
+            UInt   bestScore = 0;
 
-                    // Burst cells for prediction
-                    for(Cell * cell : *column->cells()){
-                        // Check if cell wasn't excited in T-1
-                        if(this->time() - cell->cellTime().excitedTime != 1){
-                            cell->excite(this->time() );
-                            _burstingCells.append(cell);
-                        }
-                    }
-                }
-            } else {
-                column->deactivate( this->time() );
-                for(Cell * cell : *column->cells()){
-                    if(cell->wasPredicted( this->time() )){
-                        _predictedCells.append(cell);
+            for(Cell * cell : *column->cells()){
+                for(Segment * segment : *cell->distalDendriteSegments()){
+                    UInt activation = segment->activation( this->time() );
+                    if(activation > bestScore){
+                        bestScore = activation;
+                        bestCell = cell;
                     }
                 }
             }
+
+            // Best cell found
+            if(bestScore > 1){
+                bestCell->excite( this->time() );
+                _excitedCells.append(bestCell);
+                _learningCells.append(bestCell);
+                _regionData.excitedCellsDueActivation++;
+                // Best cell not found - return one with least amount of segments
+            } else {
+                UInt numberOfSegments = bestCell->distalDendriteSegments()->size();
+                for(Cell * cell: *column->cells()){
+                    if(cell->distalDendriteSegments()->size() < numberOfSegments){
+                        numberOfSegments = cell->distalDendriteSegments()->size();
+                        bestCell = cell;
+                    }
+                }
+
+                if(!bestCell->isExcited( this->time())){
+                bestCell->excite( this->time() );
+                _excitedCells.append(bestCell);
+                }
+                _learningCells.append(bestCell);
+                _regionData.excitedCellsDueToLackOfSegments++;
+            }
+
+            // Burst cells for prediction
+            for(Cell * cell : *column->cells()){
+                // Check if cell wasn't excited in T-1
+                if(!cell->wasExcited( this->time())){
+                    cell->excite(this->time() );
+                    _burstingCells.append(cell);
+                }
+            }
         }
+
+
     }
 }
 
@@ -159,6 +154,7 @@ void Region::growSegments(){
 }
 
 void Region::adjustDistalSynapses(){
+
     for(Cell * predictedCell : _predictedCells){
         if(predictedCell->isExcited( this->time()) ){
             // Reinforce positively
@@ -173,6 +169,11 @@ void Region::adjustDistalSynapses(){
 }
 
 void Region::makePrediction(){
+    _predictedColumns.clear();
+    _predictedCells.clear();
+
+
+
     for(Cell * excitedCell : _excitedCells){
         for(Synapse * synapse : *excitedCell->axonalSynapses() ){
             synapse->predict( this->time() );
@@ -187,8 +188,8 @@ void Region::makePrediction(){
     }
     _output->fullyDischarge();
 
-    for(fdkuint x = 0; x < _settings.sensorSettings.width;x++){
-        for(fdkuint y = 0; y < _settings.sensorSettings.height; y++){
+    for(UInt x = 0; x < _settings.sensorSettings.width;x++){
+        for(UInt y = 0; y < _settings.sensorSettings.height; y++){
             Column * column = _columns->at(x).at(y);
             if(column->isPredicted( this->time())){
                 _predictedColumns.append(column);
@@ -196,6 +197,8 @@ void Region::makePrediction(){
             }
         }
     }
+
+
     qSort(_predictedColumns.begin(),_predictedColumns.end(), Column::comparePredictivePotential);
 
     while( _predictedColumns.length() > _settings.desiredSparsity){
@@ -208,6 +211,28 @@ void Region::makePrediction(){
         _regionData.predictedColumnsAfterInhibition++;
 
     }
+
+
+    // Set predicted state for cells
+    for(UInt x = 0; x < _settings.sensorSettings.width;x++){
+        for(UInt y = 0; y < _settings.sensorSettings.height; y++){
+            Column * column = _columns->at(x).at(y);
+            if(_input->read(x,y)){
+                for(Cell * cell : *column->cells()){
+                    if(cell->isPredicted( this->time() )){
+                        _predictedCells.append(cell);
+                    }
+                }
+            } else {
+                for(Cell * cell : *column->cells()){
+                    if(cell->isPredicted( this->time() )){
+                        _predictedCells.append(cell);
+                    }
+                }
+            }
+        }
+    }
+
 
 }
 

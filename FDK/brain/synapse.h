@@ -11,11 +11,11 @@ class Synapse : public Atom
 public:
     Synapse(Cell * source, Segment * distanation);
 
-    fdkfloat strength() { return _strength; }
-    void increase(fdkfloat value) { _strength += value; _strength = std::min(_strength,1.0f);}
-    void decrease(fdkfloat value) { _strength -= value; _strength = std::max(_strength,0.0f);}
+    Float strength() { return _strength; }
+    void increase(Float value) { _strength += value; _strength = std::min(_strength,1.0f);}
+    void decrease(Float value) { _strength -= value; _strength = std::max(_strength,0.0f);}
 
-    void predict(fdkutime currentTime);
+    void predict(Time currentTime);
 
     Cell * source() { return _source; }
     Segment * distanation() { return _distanation; }
@@ -23,7 +23,7 @@ public:
 private:
     Cell *      _source;
     Segment *   _distanation;
-    fdkfloat       _strength;
+    Float       _strength;
 };
 }
 #endif // SYNAPSE_H

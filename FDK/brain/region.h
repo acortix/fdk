@@ -8,20 +8,20 @@
 
 namespace FDK {
 struct RegionData {
-    fdkuint activatedColumns = 0;
-    fdkuint predictedColumnsTotal = 0;
-    fdkuint predictedColumnsAfterInhibition = 0;
+    UInt activatedColumns = 0;
+    UInt predictedColumnsTotal = 0;
+    UInt predictedColumnsAfterInhibition = 0;
 
-    fdkuint newSegments = 0;
-    fdkuint newSynapses = 0;
-    fdkuint positiveAdjustedSegments = 0;
-    fdkuint negativeAdjustedSegments = 0;
+    UInt newSegments = 0;
+    UInt newSynapses = 0;
+    UInt positiveAdjustedSegments = 0;
+    UInt negativeAdjustedSegments = 0;
 
-    fdkuint excitedCellsDueToPrediction = 0;
-    fdkuint excitedCellsDueActivation = 0;
-    fdkuint excitedCellsDueToLackOfSegments = 0;
+    UInt excitedCellsDueToPrediction = 0;
+    UInt excitedCellsDueActivation = 0;
+    UInt excitedCellsDueToLackOfSegments = 0;
 
-    fdkuint excitedSynapsesForPrediction = 0;
+    UInt excitedSynapsesForPrediction = 0;
 
     void reset(){
         activatedColumns = 0;

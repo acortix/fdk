@@ -7,7 +7,7 @@ Atom::Atom()
 }
 
 
-fdkutime Atom::time(){
+Time Atom::time(){
     return _time;
 }
 
