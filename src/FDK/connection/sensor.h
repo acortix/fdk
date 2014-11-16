@@ -4,7 +4,10 @@
 #include <vector>
 using namespace std;
 namespace FDK {
-
+struct SensorSettings{
+    UInt width;
+    UInt height;
+};
 class Sensor : public Atom
 {
 public:

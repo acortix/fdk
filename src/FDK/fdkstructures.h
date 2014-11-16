@@ -27,34 +27,13 @@ struct UIntSize{
     UInt height;
 };
 
-struct SensorSettings{
-    UInt width;
-    UInt height;
-};
-
-struct RegionSettings{
-    SensorSettings sensorSettings;
-    UInt depth;
-
-    Float learningRadius;
-    Float initialPerm;
 
 
-    Float learningRate;
-    Float sparsity;
-    UInt desiredSparsity;
 
-};
 
-template<typename T>
-struct EncoderSettings{
-    RegionSettings regionSettings;
-    vector<T> possibleSignals;
-};
 
-struct EncoderCharSettings : EncoderSettings<char>{
 
-};
+
 
 inline Float randf() { return static_cast <Float> (rand()) / static_cast <Float> (RAND_MAX);}
 inline UInt randuint(UInt a, UInt b) {return static_cast<UInt>( rand() % (b-a) + a); }

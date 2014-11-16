@@ -20,7 +20,7 @@ public:
     static FDK::Sensor * createSensor(FDK::SensorSettings settings);
     static FDK::Connection * createConnection(FDK::Sensor * from, FDK::Sensor * to);
     // ENCODER
-    static FDK::SparseCharEncoder * createSparseCharEncoder(FDK::EncoderCharSettings settings);
+    static FDK::SparseCharEncoder * createSparseCharEncoder(FDK::EncoderSettings<char> settings);
 
 };
 

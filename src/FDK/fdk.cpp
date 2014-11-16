@@ -24,6 +24,6 @@ FDK::Connection * FrankDevelopmentKit::createConnection(FDK::Sensor * from, FDK:
     return new FDK::Connection(from,to);
 }
 // ENCODER STRUCTURES
-FDK::SparseCharEncoder * FrankDevelopmentKit::createSparseCharEncoder(FDK::EncoderCharSettings settings){
+FDK::SparseCharEncoder * FrankDevelopmentKit::createSparseCharEncoder(FDK::EncoderSettings<char> settings){
     return new FDK::SparseCharEncoder(settings);
 }

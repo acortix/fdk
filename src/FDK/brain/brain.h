@@ -32,13 +32,13 @@ public:
 
 private:
     // List of all connections
-    vector<Connection*> *        _connections;
+    vector<Connection*> *       _connections;
 
     // List containing all encoders
-    vector<EncoderInterface*> *  _encoders;
+    vector<EncoderInterface*> * _encoders;
 
     // List containting all regions
-    vector<Region*>     *        _regions;
+    vector<Region*>     *       _regions;
 };
 }
 #endif // BRAIN_H

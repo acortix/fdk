@@ -1,10 +1,18 @@
 #ifndef ENCODER_H
 #define ENCODER_H
 #include "encoderinterface.h"
+#include <FDK/brain/region.h>
 #include <list>
 #include <map>
 using namespace std;
 namespace FDK {
+
+template<typename T>
+struct EncoderSettings{
+    RegionSettings regionSettings;
+    vector<T> possibleSignals;
+};
+
 template<class T>
 class Encoder : public EncoderInterface
 {

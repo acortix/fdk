@@ -25,7 +25,7 @@ FDKMainWindow::FDKMainWindow(QWidget *parent) :
     }
 
 
-    FDK::EncoderCharSettings encoderSettings;
+    FDK::EncoderSettings<char> encoderSettings;
     encoderSettings.regionSettings = regionSettings;
     encoderSettings.possibleSignals = charactersToLearn;
 

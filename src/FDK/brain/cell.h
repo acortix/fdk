@@ -66,12 +66,20 @@ public:
     void                addAxonalSynapse(Synapse * synapse);
 
 private:
+    // Index of a cell inside a column
     UInt                _index;
+    // Column that the cell belongs to
     Column *            _column;
+    // Structure of time vectors to record history of events
     CellTime            _cellTime;
 
+    // Distal dendrite segments for temporal memory
     vector<Segment *> * _distalDendriteSegments;
+    // Not implemented. This structure will hold distal
+    // dendrites that connect to lower levels in hierarchy
     vector<Segment *> * _distalExternalDendriteSegments;
+    // Axonal synapses. A list of all synapses to send
+    // outgoing potentials to othre cell's distal dendrites
     vector<Synapse *> * _axonalSynapses;
 };
 }

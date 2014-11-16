@@ -5,6 +5,7 @@
 using namespace std;
 
 namespace FDK {
+
 class SparseCharEncoder : public Encoder<char>
 {
 public:
