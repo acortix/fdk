@@ -1,4 +1,6 @@
 #include "column.h"
+#include "region.h"
+
 namespace FDK {
 Column::Column(UInt x, UInt y, UInt depth, Region *region)
 {
@@ -25,6 +27,7 @@ void Column::deactivate(Time currentTime){
 void Column::predict(Time currentTime){
     if(_columnTime.predictionTime != currentTime){
         _predictionPotential = 0;
+        _region->addPredictedColumn(this);
     }
     _columnTime.predictionTime = currentTime;
     _predictionPotential += 1;

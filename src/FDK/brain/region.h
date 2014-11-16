@@ -53,6 +53,8 @@ public:
     RegionData                  regionData()    { return _regionData; }
 
     Sensor *                    _debug;
+    void                        addPredictedColumn(Column* c) {_predictedColumns.push_back(c); }
+    void                        addPredictedCell(Cell* c) { _predictedCells.push_back(c);}
 
 private:
     RegionSettings              _settings;

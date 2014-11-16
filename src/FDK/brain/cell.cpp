@@ -1,7 +1,7 @@
 #include "cell.h"
 #include <FDK/brain/column.h>
 #include <qdebug.h>
-
+#include "region.h"
 namespace FDK {
 
 // Default constructor
@@ -50,6 +50,9 @@ void Cell::addDistalDendriteSegment(Segment * segment){
 
 // Predict cell
 void Cell::predict(Time currentTime){
+    if(!_cellTime.predictTime.get(currentTime)){
+        _column->region()->addPredictedCell(this);
+    }
     _cellTime.predictTime.set( currentTime );
     _column->predict(currentTime);
 }

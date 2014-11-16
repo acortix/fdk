@@ -188,17 +188,6 @@ void Region::makePrediction(){
     }
     _output->fullyDischarge();
 
-    for(UInt x = 0; x < _settings.sensorSettings.width;x++){
-        for(UInt y = 0; y < _settings.sensorSettings.height; y++){
-            Column * column = _columns->at(x).at(y);
-            if(column->isPredicted( this->time())){
-                _predictedColumns.append(column);
-                _regionData.predictedColumnsTotal++;
-            }
-        }
-    }
-
-
     qSort(_predictedColumns.begin(),_predictedColumns.end(), Column::comparePredictivePotential);
 
     while( _predictedColumns.length() > _settings.desiredSparsity){
@@ -211,29 +200,6 @@ void Region::makePrediction(){
         _regionData.predictedColumnsAfterInhibition++;
 
     }
-
-
-    // Set predicted state for cells
-    for(UInt x = 0; x < _settings.sensorSettings.width;x++){
-        for(UInt y = 0; y < _settings.sensorSettings.height; y++){
-            Column * column = _columns->at(x).at(y);
-            if(_input->read(x,y)){
-                for(Cell * cell : *column->cells()){
-                    if(cell->isPredicted( this->time() )){
-                        _predictedCells.append(cell);
-                    }
-                }
-            } else {
-                for(Cell * cell : *column->cells()){
-                    if(cell->isPredicted( this->time() )){
-                        _predictedCells.append(cell);
-                    }
-                }
-            }
-        }
-    }
-
-
 }
 
 Sensor * Region::input(){
