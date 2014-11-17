@@ -16,6 +16,7 @@ struct CellTime {
     TimeVector prevExcitedTime;
     TimeVector burstTime;
     TimeVector predictTime;
+    TimeVector predictTimeAtLowerThreshold;
 };
 
 // Class that represents functionality of cells
@@ -44,6 +45,7 @@ public:
 
     // Predict cell at particular time currentTime
     void                predict(Time currentTime);
+    void                predictAtLowerThreshold(Time currentTime, UInt synapseActivation);
 
     // Burst cell at particular time currentTime
     void                burst(Time currentTime)                 { _cellTime.burstTime.set( currentTime ); }
@@ -65,6 +67,8 @@ public:
     // Adds new axonal synapse
     void                addAxonalSynapse(Synapse * synapse);
 
+    UInt                activation(Time currentTime);
+
 private:
     // Index of a cell inside a column
     UInt                _index;
@@ -81,6 +85,8 @@ private:
     // Axonal synapses. A list of all synapses to send
     // outgoing potentials to othre cell's distal dendrites
     vector<Synapse *> * _axonalSynapses;
+
+    UInt                _highestActivation;
 };
 }
 #endif // CELL_H

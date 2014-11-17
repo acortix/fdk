@@ -48,13 +48,34 @@ void Cell::addDistalDendriteSegment(Segment * segment){
     _distalDendriteSegments->push_back(segment);
 }
 
+
+
 // Predict cell
 void Cell::predict(Time currentTime){
     if(!_cellTime.predictTime.get(currentTime)){
+         _cellTime.predictTime.set( currentTime );
         _column->region()->addPredictedCell(this);
     }
-    _cellTime.predictTime.set( currentTime );
     _column->predict(currentTime);
+}
+
+// Predict cell at lower threshold
+void Cell::predictAtLowerThreshold(Time currentTime, UInt synapseActivation){
+    if(!_cellTime.predictTimeAtLowerThreshold.get(currentTime)){
+        _cellTime.predictTimeAtLowerThreshold.set( currentTime );
+        _highestActivation = synapseActivation;
+    }
+    if(synapseActivation > _highestActivation){
+        _highestActivation = synapseActivation;
+    }
+
+}
+UInt Cell::activation(Time currentTime){
+    if(_cellTime.predictTimeAtLowerThreshold.get(currentTime)){
+        return _highestActivation;
+    } else {
+        return 0;
+    }
 }
 
 }

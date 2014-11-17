@@ -7,6 +7,7 @@ namespace FDK {
 typedef long long int           Time;
 typedef unsigned long int       UInt;
 typedef float                   Float;
+typedef bool                    Bool;
 
 struct UIntPoint{
     UIntPoint(){

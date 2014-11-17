@@ -16,7 +16,7 @@ FDKMainWindow::FDKMainWindow(QWidget *parent) :
     regionSettings.depth = 32;
     regionSettings.learningRate = 0.01;
     regionSettings.sparsity = 0.02;
-    regionSettings.desiredSparsity = (FDK::UInt)( (FDK::Float)(45*45)*0.02f);
+;
 
     string stringOfCharacters = "qwertyuiopasdfghjklzxcvbnm. ";
     vector<char> charactersToLearn;
@@ -40,8 +40,8 @@ FDKMainWindow::FDKMainWindow(QWidget *parent) :
 
     // Feed encoder some information
     for(int x = 0; x < 10000; x++){
-        encoder->appendToBuffer( string("the quick brown fox jumps over the lazy dog. ") );
-        //encoder->appendToBuffer( QString("abcdefgfedcb") );
+        //encoder->appendToBuffer( string("the quick brown fox jumps over the lazy dog. ") );
+        encoder->appendToBuffer( string("the quick and brown fox jumped. the fox jumped so high that the lazy dog was quick. the quick dog has jumped too.") );
     }
 
 
@@ -67,17 +67,18 @@ void FDKMainWindow::step(){
         qDebug()
         << "Next->" << encoder->nextCharacter() << sc
         << encoder->decode( region->output() ) << " <- Pred "
-        << " AC: "   <<   QString("%1").arg(region->regionData().activatedColumns, 5, 10, QChar(' '))
-        << " PCT: "  <<   QString("%1").arg(region->regionData().predictedColumnsTotal, 5, 10, QChar(' '))
-        << " PCTAI: "<<   QString("%1").arg(region->regionData().predictedColumnsAfterInhibition, 5, 10, QChar(' '))
-        << " EC-P: " <<   QString("%1").arg(region->regionData().excitedCellsDueToPrediction, 5, 10, QChar(' '))
-        << " EC-A: " <<   QString("%1").arg(region->regionData().excitedCellsDueActivation, 5, 10, QChar(' '))
-        << " EC-S: " <<   QString("%1").arg(region->regionData().excitedCellsDueToLackOfSegments, 5, 10, QChar(' '))
-        << " ES-P: " <<   QString("%1").arg(region->regionData().excitedSynapsesForPrediction, 5, 10, QChar(' '))
-        << " SgAdj+: " << QString("%1").arg(region->regionData().positiveAdjustedSegments, 5, 10, QChar(' '))
-        << " SgAdj-: " << QString("%1").arg(region->regionData().negativeAdjustedSegments, 5, 10, QChar(' '))
-        << " NwSg: " <<  QString("%1").arg(region->regionData().newSegments, 5, 10, QChar(' '))
-        << " NwSn: " <<  QString("%1").arg(region->regionData().newSynapses, 5, 10, QChar(' '));
+        << " AC: "      <<   QString("%1").arg(region->regionData().activatedColumns, 5, 10, QChar(' '))
+        << " PCT: "     <<   QString("%1").arg(region->regionData().predictedColumnsTotal, 5, 10, QChar(' '))
+        << " PCTAI: "   <<   QString("%1").arg(region->regionData().predictedColumnsAfterInhibition, 5, 10, QChar(' '))
+        << " EC-P: "    <<   QString("%1").arg(region->regionData().excitedCellsDueToPrediction, 5, 10, QChar(' '))
+        << " EC-A: "    <<   QString("%1").arg(region->regionData().excitedCellsDueActivation, 5, 10, QChar(' '))
+        << " EC-S: "    <<   QString("%1").arg(region->regionData().excitedCellsDueToLackOfSegments, 5, 10, QChar(' '))
+        << " ES-P: "    <<   QString("%1").arg(region->regionData().excitedSynapsesForPrediction, 5, 10, QChar(' '))
+        << " SgAdj+: "  <<   QString("%1").arg(region->regionData().positiveAdjustedSegments, 5, 10, QChar(' '))
+        << " SgAdj-: "  <<   QString("%1").arg(region->regionData().negativeAdjustedSegments, 5, 10, QChar(' '))
+        << " NwSg: "    <<   QString("%1").arg(region->regionData().newSegments, 5, 10, QChar(' '))
+        << " NwSn: "    <<   QString("%1").arg(region->regionData().newSynapses, 5, 10, QChar(' '))
+        << " RT: "      <<   QString("%1").arg(region->regionData().executionTime, 5, 10, QChar(' '));
     }
     ui->regionOutputWidget->update();
     ui->debugSensor->update();

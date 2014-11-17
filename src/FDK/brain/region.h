@@ -7,16 +7,55 @@
 using namespace std;
 
 namespace FDK {
-struct RegionSettings{
-    SensorSettings sensorSettings;
-    UInt  depth;
-
+struct SpatialPoolerSettings{
+    Bool  enabled = false;
     Float learningRadius;
     Float initialPerm;
+};
+struct TemporalPoolerSettings{
+    Bool enabled = false;
+};
 
-    Float learningRate;
-    Float sparsity;
-    UInt  desiredSparsity;
+struct RegionSettings{
+    // General settings
+    // Size of the sensor NxM
+    SensorSettings sensorSettings;
+    // Number of cells in the column
+    UInt            depth;
+
+    // General desired sparsity
+    Float sparsity                      = 0.02;
+    // Learning rate
+    Float learningRate                  = 0.01;
+
+    // Topology
+    // Max distal dendrite segments
+    UInt maxSegments                    = 10;
+
+    // Signaling
+    // Percent of active synapses in a segment for it to become active
+    Float activationThreshold           = 0.37;
+    // Percent of minimum active synapses in a segment for it to cause
+    // activity in the cell (for choosing non predicted cell)
+    Float minActivationThreshold        = 0.05;
+    Float defaultSynapseStrength        = 0.3;
+    Float synapseThreshold              = 0.2;
+    Float minSynapseThreshold           = 0.1;
+
+    // Pooler settings
+    SpatialPoolerSettings   spatialPoolerSettings;
+    TemporalPoolerSettings  temporalPoolerSettings;
+
+
+    // Camputed internally
+    UInt  computedSparsity;
+    UInt  computedActivationThreshold;
+    UInt  computedMinActivationThreshold;
+    void compute(){
+        computedSparsity = (UInt)( (Float)(sensorSettings.width*sensorSettings.height)*sparsity);
+        computedActivationThreshold = computedSparsity*activationThreshold;
+        computedMinActivationThreshold = computedSparsity*minActivationThreshold;
+    }
 
 };
 // Debug data. This structure is updated each time step.
@@ -36,6 +75,8 @@ struct RegionData {
 
     UInt excitedSynapsesForPrediction = 0;
 
+    UInt executionTime = 0;
+
     void reset(){
         activatedColumns = 0;
         predictedColumnsTotal = 0;
@@ -51,6 +92,8 @@ struct RegionData {
         excitedCellsDueToLackOfSegments = 0;
 
         excitedSynapsesForPrediction = 0;
+
+        executionTime = 0;
     }
 };
 
@@ -65,6 +108,8 @@ public:
     Sensor *                    input();
     // Accessor for output sensor
     Sensor *                    output();
+    // Accessor for settings
+    RegionSettings *            settings();
 
     // Accessor for debug information about region statistic
     RegionData                  regionData()    { return _regionData; }

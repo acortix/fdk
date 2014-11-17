@@ -1,5 +1,8 @@
 #include "segment.h"
 #include <FDK/brain/cell.h>
+#include <FDK/brain/column.h>
+#include <FDK/brain/region.h>
+
 #include <qDebug>
 namespace FDK {
 Segment::Segment(Cell *sourceCell)
@@ -16,7 +19,7 @@ UInt Segment::activation(Time currentTime){
     // The cell has had predictions at T-1 because predict()
     // is called at the end of the step. So for this iteration
     // we should check the T-1 value.
-    if(currentTime - _segmentTime.predictionTimeAtLowerThreshold == 1){
+    if(currentTime - _segmentTime.predictionTimeAtLowerThreshold == 0){
         return _activeSynapsesAtLowerThreshold;
 
     // There were no prediction at T-1 - return 0
@@ -31,7 +34,7 @@ void Segment::predict(Time currentTime){
         _segmentTime.predictionTime = currentTime;
     } else {
         _activeSynapses++;
-        if(_activeSynapses > 15){
+        if(_activeSynapses > _sourceCell->column()->region()->settings()->computedActivationThreshold ){
             _sourceCell->predict(currentTime);
         }
     }
@@ -43,12 +46,9 @@ void Segment::predictAtLowerThreshold(Time currentTime){
         _segmentTime.predictionTimeAtLowerThreshold = currentTime;
     } else {
         _activeSynapsesAtLowerThreshold++;
-        // No need to call predict on cell, as the lower threshold is not used
-        /*
-        if(_activeSynapsesAtLowerThreshold > 5){
-            _sourceCell->predictAtLowerThreshold(currentTime);
+        if(_activeSynapsesAtLowerThreshold > _sourceCell->column()->region()->settings()->computedMinActivationThreshold ){
+            _sourceCell->predictAtLowerThreshold(currentTime, _activeSynapsesAtLowerThreshold);
         }
-        */
     }
 }
 }

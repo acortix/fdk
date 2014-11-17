@@ -1,10 +1,15 @@
 #include "region.h"
 #include <qdebug.h>
+#include <iostream>
+#include <ctime>
+
 namespace FDK {
 
 Region::Region(RegionSettings settings) : Atom()
 {
     _settings = settings;
+    _settings.compute();
+
 
 
     _input = new Sensor(settings.sensorSettings);
@@ -24,6 +29,8 @@ Region::Region(RegionSettings settings) : Atom()
 
 // Region processing function
 void Region::step(){
+    std::clock_t startTime = std::clock();
+
     Atom::step();
 
     _output->fullyDischarge();
@@ -53,6 +60,8 @@ void Region::step(){
 
 
 
+
+    _regionData.executionTime = (float( std::clock () - startTime ) /  CLOCKS_PER_SEC)*1000.0f;
 
 }
 // Spatial pooler. Currently empty as unnecessary.
@@ -114,14 +123,10 @@ void Region::activateColumns(){
 
             // Check each cell for best activation
             for(Cell * cell : *column->cells()){
-                // Check each segment
-                for(Segment * segment : *cell->distalDendriteSegments()){
-                    // If activation (below threshold) is better then the best cell
-                    // Use that cell instead
-                    if(segment->activation( this->time() ) > bestScore){
-                        bestScore = segment->activation( this->time() );
-                        bestCell = cell;
-                    }
+                if( cell->activation( this->time()-1) > bestScore){
+                    // Activation is precomputed reactively during prediction at previous time step
+                    bestScore = cell->activation( this->time()-1);
+                    bestCell = cell;
                 }
             }
 
@@ -168,7 +173,7 @@ void Region::activateColumns(){
 void Region::growSegments(){
     // Create synapses with previously excited cells if they don't exist.
     for(Cell * learningCell : _learningCells){
-        if(learningCell->distalDendriteSegments()->size() < 5){
+        if(learningCell->distalDendriteSegments()->size() < _settings.maxSegments){
             Segment * newSegment = new Segment(learningCell);
             _regionData.newSegments++;
             for(Cell * previouslyExcitedCell : _previouslyExcitedCells){
@@ -243,10 +248,10 @@ void Region::makePrediction(){
     _regionData.predictedColumnsTotal = _predictedColumns.size();
 
     // Sort columns by their predictive potential
-    qSort(_predictedColumns.begin(),_predictedColumns.end(), Column::comparePredictivePotential);
+    std::sort(_predictedColumns.begin(),_predictedColumns.end(), Column::comparePredictivePotential);
 
     // Remove all columns above sparsity levels
-    while( _predictedColumns.size() > _settings.desiredSparsity){
+    while( _predictedColumns.size() > _settings.computedSparsity){
         _predictedColumns.pop_back();
     }
 
@@ -268,5 +273,11 @@ Sensor * Region::input(){
 // Sensor output accessor
 Sensor * Region::output(){
     return _output;
+}
+
+// Pointer to settings. We need this to access parameters in
+// Synapse, Segment, Cell and Column
+RegionSettings * Region::settings(){
+    return &_settings;
 }
 }
