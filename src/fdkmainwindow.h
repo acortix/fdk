@@ -20,10 +20,10 @@ private:
     Ui::FDKMainWindow *ui;
 
 
-    FDK::Brain * brain;
-    FDK::Region * region;
-    FDK::SparseCharEncoder * encoder;
-    FDK::Connection * connection;
+    FDK::Brain *                brain;
+    FDK::Region *               region;
+    FDK::SparseCharEncoder *    encoder;
+    FDK::SensorConnection *     connection;
 
 public slots:
     void step();

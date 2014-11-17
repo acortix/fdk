@@ -13,8 +13,8 @@ FDKMainWindow::FDKMainWindow(QWidget *parent) :
     FDK::RegionSettings regionSettings;
     regionSettings.sensorSettings.width = 45;
     regionSettings.sensorSettings.height = 45;
-    regionSettings.depth = 4;
-    regionSettings.learningRate = 0.1;
+    regionSettings.depth = 32;
+    regionSettings.learningRate = 0.01;
     regionSettings.sparsity = 0.02;
     regionSettings.desiredSparsity = (FDK::UInt)( (FDK::Float)(45*45)*0.02f);
 
@@ -32,9 +32,9 @@ FDKMainWindow::FDKMainWindow(QWidget *parent) :
     brain = FrankDevelopmentKit::createBrain();
     region = FrankDevelopmentKit::createRegion(regionSettings);
     encoder = FrankDevelopmentKit::createSparseCharEncoder(encoderSettings);
-    connection = FrankDevelopmentKit::createConnection(encoder->output(),region->input());
+    connection = FrankDevelopmentKit::createSensorConnection(encoder->output(),region->input());
 
-    brain->addConnection(connection);
+    brain->addSensorConnection(connection);
     brain->addEncoder(encoder);
     brain->addRegion(region);
 
@@ -57,7 +57,7 @@ FDKMainWindow::~FDKMainWindow()
 
 void FDKMainWindow::step(){
 
-    for(FDK::UInt i = 0; i < 20; i++){
+    for(FDK::UInt i = 0; i < 200; i++){
         brain->step();
         //ui->synapseDynamicsGraph->addValue( region->regionData().synapseChanges );
         QString sc = " - ";

@@ -48,19 +48,28 @@ public:
     // Pointer to a region this column belongs to (for reactive)
     Region*         region()                                {return _region; }
 
+    // This function is used in column sorting to find top N columns with
+    // highest predictive potential: How many time the cells in the column
+    // have been predicted during single time step.
     static bool     comparePredictivePotential( Column * a, Column * b){
         return a->predictionPotential() < b->predictionPotential();
     }
 
 private:
+    // X position in the region
     UInt            _x;
+    // Y position in the region
     UInt            _y;
+    // Number of cells per column
     UInt            _depth;
-
+    // How many time the cells in the column
+    // have been predicted during single time step.
     UInt            _predictionPotential;
-
+    // List of all cells in the column
     vector<Cell*> * _cells;
+    // Column time object. TODO: Update the column to use time vecotr
     ColumnTime      _columnTime;
+    // Pointer to a region this column is a part of
     Region *        _region;
 
 };

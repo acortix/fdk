@@ -1,7 +1,7 @@
 #ifndef BRAIN_H
 #define BRAIN_H
 #include <FDK/atom.h>
-#include <FDK/connection/connection.h>
+#include <FDK/connection/sensorconnection.h>
 #include <FDK/encoder/sparsecharencoder.h>
 
 #include "region.h"
@@ -25,14 +25,14 @@ public:
     void                        addEncoder(EncoderInterface * encoder);
 
     // Add new connection to the brain. Connections usually connect region to region or encoder to region
-    void                        addConnection(Connection * connection);
+    void                        addSensorConnection(SensorConnection * connection);
 
     // Simmulate one time step for the whole system
     void                        step();
 
 private:
     // List of all connections
-    vector<Connection*> *       _connections;
+    vector<SensorConnection*> * _sensorConnections;
 
     // List containing all encoders
     vector<EncoderInterface*> * _encoders;

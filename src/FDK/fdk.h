@@ -2,7 +2,7 @@
 #define FDK_H
 #include <FDK/brain/brain.h>
 #include <FDK/brain/region.h>
-#include <FDK/connection/connection.h>
+#include <FDK/connection/sensorconnection.h>
 #include <FDK/connection/sensor.h>
 #include <FDK/encoder/sparsecharencoder.h>
 
@@ -13,12 +13,12 @@ public:
     FrankDevelopmentKit();
 
     // BRAIN STRUCTURES
-    static FDK::Brain * createBrain();
-    static FDK::Region * createRegion(FDK::RegionSettings settings);
+    static FDK::Brain *             createBrain();
+    static FDK::Region *            createRegion(FDK::RegionSettings settings);
 
     // CONNECTION STRUCTURES
-    static FDK::Sensor * createSensor(FDK::SensorSettings settings);
-    static FDK::Connection * createConnection(FDK::Sensor * from, FDK::Sensor * to);
+    static FDK::Sensor *            createSensor(FDK::SensorSettings settings);
+    static FDK::SensorConnection *  createSensorConnection(FDK::Sensor * from, FDK::Sensor * to);
     // ENCODER
     static FDK::SparseCharEncoder * createSparseCharEncoder(FDK::EncoderSettings<char> settings);
 

@@ -9,16 +9,17 @@ using namespace std;
 namespace FDK {
 struct RegionSettings{
     SensorSettings sensorSettings;
-    UInt depth;
+    UInt  depth;
 
     Float learningRadius;
     Float initialPerm;
 
     Float learningRate;
     Float sparsity;
-    UInt desiredSparsity;
+    UInt  desiredSparsity;
 
 };
+// Debug data. This structure is updated each time step.
 struct RegionData {
     UInt activatedColumns = 0;
     UInt predictedColumnsTotal = 0;

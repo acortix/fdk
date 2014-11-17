@@ -6,7 +6,7 @@ namespace FDK{
 Brain::Brain() : Atom()
 {
     // Initialize all necessary arrays
-    _connections = new vector<Connection*>();
+    _sensorConnections = new vector<SensorConnection*>();
     _encoders = new vector<EncoderInterface*>();
     _regions = new vector<Region*>();
 }
@@ -22,8 +22,8 @@ void Brain::addEncoder(EncoderInterface *encoder){
 }
 
 // Add new connection to the brain
-void Brain::addConnection(Connection * connection){
-    _connections->push_back(connection);
+void Brain::addSensorConnection(SensorConnection *connection){
+    _sensorConnections->push_back(connection);
 }
 
 // Run simmulation for one time step
@@ -54,7 +54,7 @@ void Brain::step(){
         // connections to ensure that regions that have other regions as inputs
         // will progress to t+1. We'll do so untill we run out of regions that
         // are at time t.
-        for(Connection * connection : *_connections){
+        for(SensorConnection * connection : *_sensorConnections){
             connection->step();
         }
 

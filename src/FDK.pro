@@ -25,7 +25,6 @@ SOURCES += main.cpp\
     FDK/brain/synapse.cpp \
     FDK/brain/region.cpp \
     FDK/brain/segment.cpp \
-    FDK/connection/connection.cpp \
     FDK/connection/sensor.cpp \
     sensorwidget.cpp \
     graphwidget.cpp \
@@ -33,7 +32,9 @@ SOURCES += main.cpp\
     FDK/encoder/encoder.cpp \
     FDK/encoder/encoderinterface.cpp \
     FDK/encoder/sparsecharencoder.cpp \
-    FDK/timevector.cpp
+    FDK/timevector.cpp \
+    FDK/connection/sensorconnection.cpp \
+    FDK/connection/regionconnection.cpp
 
 HEADERS  += fdkmainwindow.h \
     FDK/fdk.h \
@@ -44,7 +45,6 @@ HEADERS  += fdkmainwindow.h \
     FDK/brain/synapse.h \
     FDK/brain/region.h \
     FDK/brain/segment.h \
-    FDK/connection/connection.h \
     FDK/connection/sensor.h \
     FDK/fdkstructures.h \
     sensorwidget.h \
@@ -53,7 +53,9 @@ HEADERS  += fdkmainwindow.h \
     FDK/encoder/encoder.h \
     FDK/encoder/encoderinterface.h \
     FDK/encoder/sparsecharencoder.h \
-    FDK/timevector.h
+    FDK/timevector.h \
+    FDK/connection/sensorconnection.h \
+    FDK/connection/regionconnection.h
 
 FORMS    += fdkmainwindow.ui
 

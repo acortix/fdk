@@ -20,8 +20,8 @@ FDK::Region * FrankDevelopmentKit::createRegion(FDK::RegionSettings settings){
 FDK::Sensor * FrankDevelopmentKit::createSensor(FDK::SensorSettings settings){
     return new FDK::Sensor(settings);
 }
-FDK::Connection * FrankDevelopmentKit::createConnection(FDK::Sensor * from, FDK::Sensor * to){
-    return new FDK::Connection(from,to);
+FDK::SensorConnection * FrankDevelopmentKit::createSensorConnection(FDK::Sensor * from, FDK::Sensor * to){
+    return new FDK::SensorConnection(from,to);
 }
 // ENCODER STRUCTURES
 FDK::SparseCharEncoder * FrankDevelopmentKit::createSparseCharEncoder(FDK::EncoderSettings<char> settings){

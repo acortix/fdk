@@ -15,6 +15,7 @@ public:
     void increase(Float value) { _strength += value; _strength = std::min(_strength,1.0f);}
     void decrease(Float value) { _strength -= value; _strength = std::max(_strength,0.0f);}
 
+    void predictAtLowerThreshold(Time currentTime);
     void predict(Time currentTime);
 
     Cell * source() { return _source; }
