@@ -69,10 +69,10 @@ void FDKMainWindow::step(){
         << encoder->decode( region->output() ) << " <- Pred "
         << " AC: "      <<   QString("%1").arg(region->regionData().activatedColumns, 5, 10, QChar(' '))
         << " PCT: "     <<   QString("%1").arg(region->regionData().predictedColumnsTotal, 5, 10, QChar(' '))
-        << " PCTAI: "   <<   QString("%1").arg(region->regionData().predictedColumnsAfterInhibition, 5, 10, QChar(' '))
+     //   << " PCTAI: "   <<   QString("%1").arg(region->regionData().predictedColumnsAfterInhibition, 5, 10, QChar(' '))
         << " EC-P: "    <<   QString("%1").arg(region->regionData().excitedCellsDueToPrediction, 5, 10, QChar(' '))
-        << " EC-A: "    <<   QString("%1").arg(region->regionData().excitedCellsDueActivation, 5, 10, QChar(' '))
-        << " EC-S: "    <<   QString("%1").arg(region->regionData().excitedCellsDueToLackOfSegments, 5, 10, QChar(' '))
+     //   << " EC-A: "    <<   QString("%1").arg(region->regionData().excitedCellsDueActivation, 5, 10, QChar(' '))
+     //   << " EC-S: "    <<   QString("%1").arg(region->regionData().excitedCellsDueToLackOfSegments, 5, 10, QChar(' '))
         << " ES-P: "    <<   QString("%1").arg(region->regionData().excitedSynapsesForPrediction, 5, 10, QChar(' '))
         << " SgAdj+: "  <<   QString("%1").arg(region->regionData().positiveAdjustedSegments, 5, 10, QChar(' '))
         << " SgAdj-: "  <<   QString("%1").arg(region->regionData().negativeAdjustedSegments, 5, 10, QChar(' '))

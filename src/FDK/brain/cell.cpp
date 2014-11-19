@@ -2,6 +2,8 @@
 #include <FDK/brain/column.h>
 #include <qdebug.h>
 #include "region.h"
+
+
 namespace FDK {
 
 // Default constructor
@@ -55,6 +57,12 @@ void Cell::predict(Time currentTime){
     if(!_cellTime.predictTime.get(currentTime)){
          _cellTime.predictTime.set( currentTime );
         _column->region()->addPredictedCell(this);
+
+        if(_column->region()->outputRegion() != NULL){
+            if(_column->region()->outputRegion()->settings()->temporalPoolerSettings.enabled){
+                // TODO: Temporal Pooler
+            }
+        }
     }
     _column->predict(currentTime);
 }

@@ -23,6 +23,17 @@ struct UIntPoint{
     UInt x = 0;
     UInt y = 0;
 };
+struct UIntVector{
+    UIntVector(){
+        this->x = 0;
+        this->y = 0;
+        this->z = 0;
+    }
+    UInt x = 0;
+    UInt y = 0;
+    UInt z = 0;
+};
+
 struct UIntSize{
     UInt width;
     UInt height;

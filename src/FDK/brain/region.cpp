@@ -10,8 +10,6 @@ Region::Region(RegionSettings settings) : Atom()
     _settings = settings;
     _settings.compute();
 
-
-
     _input = new Sensor(settings.sensorSettings);
     _output = new Sensor(settings.sensorSettings);
     _debug = new Sensor(settings.sensorSettings);
@@ -31,141 +29,132 @@ Region::Region(RegionSettings settings) : Atom()
 void Region::step(){
     std::clock_t startTime = std::clock();
 
+    // Update global clock. It is different from local clock,
+    // because in case of an active temporal pooler clock of the
+    // temporal memory is not updated every timestep
     Atom::step();
+    Atom::localStep();
 
     _output->fullyDischarge();
     _debug->fullyDischarge();
-
     _regionData.reset();
 
     // Copy excited cells to previusly excited cells
     _previouslyExcitedCells.clear();
     _previouslyExcitedCells = _excitedCells;
 
-    // TODO: Perform SP
-
     // Clear time cache
     _excitedCells.clear();
     _burstingCells.clear();
-
     _learningCells.clear();
 
+    // SP/TP/Pass
+    this->pooler();
 
-
-
-    this->activateColumns();
+    // Temporal memory
     this->growSegments();
     this->adjustDistalSynapses();
+
+    // Make prediction for the next step
     this->makePrediction();
-
-
-
 
     _regionData.executionTime = (float( std::clock () - startTime ) /  CLOCKS_PER_SEC)*1000.0f;
 
 }
-// Spatial pooler. Currently empty as unnecessary.
-void Region::spatialPooler(){
 
+
+
+void Region::pooler(){
+
+    for(UIntPoint p : *_input->buffer()){
+        activateColumn( _columns->at(p.x).at(p.y) );
+    }
 }
 
+// Activate column
+void Region::activateColumn(Column* column){
+    // Activate column
+    column->activate( this->localTime() );
 
-// Activate columns based on sparse input
-void Region::activateColumns(){
-    // Activate column cells
-    // Input sensor contains a buffer with indexes for all active columns
-    // Since we don't use spatial pooler, we can just go through those indexes
-    // and skip all non active columns.
-    for(UIntPoint p : *_input->buffer()){
+    // Update debug info
+    _regionData.activatedColumns++;
 
-        // Set column variable to make code more readable
-        Column * column = _columns->at(p.x).at(p.y);
+    // Check if there are any predicted cells in the column
+    bool hasPredictedCells = false;
 
-        // Activate column
-        column->activate( this->time() );
+    // For each cell in the column
+    for(Cell * cell : *column->cells()){
 
-        // Update debug info
-        _regionData.activatedColumns++;
+        // If the cell was predicted...
+        if(cell->wasPredicted( this->localTime() )){
 
-        // Check if there are any predicted cells in the column
-        bool hasPredictedCells = false;
+            // Excite this cell
+            cell->excite( this->localTime() );
 
-        // For each cell in the column
+            // Add this cell to a buffer, so that we could keep track of it
+            _excitedCells.push_back(cell);
+
+            // Ensure that we know that there are predicted cells outside of the loop
+            hasPredictedCells = true;
+
+            // Update debug info
+            _regionData.excitedCellsDueToPrediction++;
+        }
+    }
+
+    // If there are no predicted cells, we should use other means of activating them.
+    // Currently there are two ways of doing that:
+    if(!hasPredictedCells){
+
+        // Find best cell that had most activations at T-1
+        // Grab first cell as the best one
+        Cell * bestCell = column->cells()->at(0);
+
+        // Ensure that the best score is 0
+        UInt   bestScore = 0;
+
+        // Check each cell for best activation
         for(Cell * cell : *column->cells()){
-
-            // If the cell was predicted...
-            if(cell->wasPredicted( this->time() )){
-
-                // Excite this cell
-                cell->excite( this->time() );
-
-                // Add this cell to a buffer, so that we could keep track of it
-                _excitedCells.push_back(cell);
-
-                // Ensure that we know that there are predicted cells outside of the loop
-                hasPredictedCells = true;
-
-                // Update debug info
-                _regionData.excitedCellsDueToPrediction++;
+            if( cell->activation( this->localTime()-1) > bestScore){
+                // Activation is precomputed reactively during prediction at previous time step
+                bestScore = cell->activation( this->localTime()-1);
+                bestCell = cell;
             }
         }
 
-        // If there are no predicted cells, we should use other means of activating them.
-        // Currently there are two ways of doing that:
-        if(!hasPredictedCells){
+        // Best cell found if it had at least 1 activation in one of the segments
+        if(bestScore > 1){
+            bestCell->excite( this->localTime() );
+            _excitedCells.push_back(bestCell);
+            _learningCells.push_back(bestCell);
+            _regionData.excitedCellsDueActivation++;
 
-            // Find best cell that had most activations at T-1
-            // Grab first cell as the best one
-            Cell * bestCell = column->cells()->at(0);
-
-            // Ensure that the best score is 0
-            UInt   bestScore = 0;
-
-            // Check each cell for best activation
-            for(Cell * cell : *column->cells()){
-                if( cell->activation( this->time()-1) > bestScore){
-                    // Activation is precomputed reactively during prediction at previous time step
-                    bestScore = cell->activation( this->time()-1);
+        // Best cell not found - return one with least amount of segments
+        } else {
+            UInt numberOfSegments = bestCell->distalDendriteSegments()->size();
+            for(Cell * cell: *column->cells()){
+                if(cell->distalDendriteSegments()->size() < numberOfSegments){
+                    numberOfSegments = cell->distalDendriteSegments()->size();
                     bestCell = cell;
                 }
             }
-
-            // Best cell found if it had at least 1 activation in one of the segments
-            if(bestScore > 1){
-                bestCell->excite( this->time() );
+            // Make sure that we don't double excite the cell
+            if(!bestCell->isExcited( this->localTime())){
+                bestCell->excite( this->localTime() );
                 _excitedCells.push_back(bestCell);
-                _learningCells.push_back(bestCell);
-                _regionData.excitedCellsDueActivation++;
-
-            // Best cell not found - return one with least amount of segments
-            } else {
-                UInt numberOfSegments = bestCell->distalDendriteSegments()->size();
-                for(Cell * cell: *column->cells()){
-                    if(cell->distalDendriteSegments()->size() < numberOfSegments){
-                        numberOfSegments = cell->distalDendriteSegments()->size();
-                        bestCell = cell;
-                    }
-                }
-                // Make sure that we don't double excite the cell
-                if(!bestCell->isExcited( this->time())){
-                    bestCell->excite( this->time() );
-                    _excitedCells.push_back(bestCell);
-                }
-                _learningCells.push_back(bestCell);
-                _regionData.excitedCellsDueToLackOfSegments++;
             }
-
-            // Burst cells for prediction
-            for(Cell * cell : *column->cells()){
-                // Check if cell isn't excited already
-                if(!cell->isExcited( this->time())){
-                    cell->excite(this->time() );
-                    _burstingCells.push_back(cell);
-                }
-            }
+            _learningCells.push_back(bestCell);
+            _regionData.excitedCellsDueToLackOfSegments++;
         }
 
-
+        // Burst cells for prediction
+        for(Cell * cell : *column->cells()){
+            // Check if cell isn't excited already
+            if(!cell->isExcited( this->localTime())){
+                cell->excite(this->localTime() );
+                _burstingCells.push_back(cell);
+            }
+        }
     }
 }
 
@@ -190,13 +179,13 @@ void Region::growSegments(){
 void Region::adjustDistalSynapses(){
 
     for(Cell * predictedCell : _predictedCells){
-        if(predictedCell->isExcited( this->time()) ){
+        if(predictedCell->isExcited( this->localTime()) ){
             // Reinforce positively
-            predictedCell->adaptSegments( _settings.learningRate, this->time() );
+            predictedCell->adaptSegments( _settings.learningRate, this->localTime() );
             _regionData.positiveAdjustedSegments++;
-        } else if(!predictedCell->isExcited( this->time()) ){
+        } else if(!predictedCell->isExcited( this->localTime()) ){
             // Reinforce negatively
-            predictedCell->adaptSegments( -_settings.learningRate, this->time() );
+            predictedCell->adaptSegments( -_settings.learningRate, this->localTime() );
             _regionData.negativeAdjustedSegments++;
         }
     }
@@ -213,13 +202,13 @@ void Region::makePrediction(){
         // Go through all axonal synapses of the excited cell
         for(Synapse * synapse : *excitedCell->axonalSynapses() ){
             // Execute reactive prediction for T+1
-            synapse->predict( this->time() );
+            synapse->predict( this->localTime() );
 
             // Execute reactive prediction at lowere threshold
             // This calculation is used for choosing best cell,
             // when there are no predicted cells in the column
             // at T+1
-            synapse->predictAtLowerThreshold( this->time() );
+            synapse->predictAtLowerThreshold( this->localTime() );
 
             // Update debug infor
             _regionData.excitedSynapsesForPrediction++;
@@ -230,13 +219,13 @@ void Region::makePrediction(){
         // Go through all axonal synapses of the excited cell
         for(Synapse * synapse : *excitedCell->axonalSynapses() ){
             // Execute reactive prediction for T+1
-            synapse->predict( this->time() );
+            synapse->predict( this->localTime() );
 
             // Execute reactive prediction at lowere threshold
             // This calculation is used for choosing best cell,
             // when there are no predicted cells in the column
             // at T+1
-            synapse->predictAtLowerThreshold( this->time() );
+            synapse->predictAtLowerThreshold( this->localTime() );
 
             // Update debug infor
             _regionData.excitedSynapsesForPrediction++;
@@ -269,11 +258,18 @@ void Region::makePrediction(){
 Sensor * Region::input(){
     return _input;
 }
+Region * Region::inputRegion(){
+    return _inputRegion;
+}
 
 // Sensor output accessor
 Sensor * Region::output(){
     return _output;
 }
+Region * Region::outputRegion(){
+    return _outputRegion;
+}
+
 
 // Pointer to settings. We need this to access parameters in
 // Synapse, Segment, Cell and Column
